@@ -250,6 +250,55 @@ class read_config_file:
                      self.flag=0
                  else:
                      self.flag=10
+                     
+            #### SYS_ORIENTATION INFORMATION (11)
+            elif line=='SYS_ORIENTATION\n' or self.flag==11:
+                 if self.flag==11:
+                     current_line=[float(s) for s in line.split()]
+                     if len(current_line)==1:
+                         self.sys_or=current_line[0]
+                         #DEBUG
+                         #print(self.sys_or)
+                     else:
+                         sys.exit('Error reading SYS_ORIENTATION value!')
+                     self.flag=0
+                 else:
+                     self.flag=11
+                     
+            #### ALT_PID INFORMATION (12)
+            elif line=='ALT_PID\n' or self.flag==12:
+                 if self.flag==12:
+                     current_line=[float(s) for s in line.split()]
+                     if len(current_line)==4:
+                         self.p_alt,self.d_alt,self.i_alt,self.il_alt=[float(s) for s in line.split()]
+                         #DEBUG
+                         #print(self.p_alt)
+                         #print(self.d_alt)
+                         #print(self.i_alt)
+                         #print(self.il_alt)
+                     else:
+                         sys.exit('Error reading ALT_PID values!')
+                     self.flag=0
+                 else:
+                     self.flag=12
+                     
+            #### SYS_ORIENTATION_OFFSET INFORMATION (13)
+            elif line=='SYS_ORIENTATION_OFFSET\n' or self.flag==13:
+                 if self.flag==13:
+                     current_line=[float(s) for s in line.split()]
+                     if len(current_line)==2:
+                         self.sys_offset_x,self.sys_offset_y=[float(s) for s in line.split()]
+                         #DEBUG
+                         #print(self.sys_offset_x)
+                         #print(self.sys_offset_y)
+                     else:
+                         sys.exit('Error reading SYS_ORIENTATION_OFFSET values!')
+                     self.flag=0
+                 else:
+                     self.flag=13                     
+                     
+                     
+#---------------------------------------------------------------------------                     
 
             else:
                 sys.exit('Unknown error reading configuration file!')
