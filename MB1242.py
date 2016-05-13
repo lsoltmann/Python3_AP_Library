@@ -10,10 +10,11 @@
     
     INPUTS:     i2c_addr = I2C address of sensor
     
-    OUTPUTS:    us_dist = Measured sensor distance
+    OUTPUTS:    self.dist = Measured sensor distance (cm)
     
     NOTES:
     - Written for python3
+    - MaxBotix recommends waiting 100ms between readings
     
     '''
 
@@ -25,10 +26,11 @@ class MB1242:
         self.addr=i2c_addr
         self.bus=smbus.SMBus(1)
 
-    def distance(self,wait_time=0.1):
+    def refreshDistance(self):
         self.bus.write_byte(self.addr, 0x51)
-        time.sleep(wait_time)
+        return None
+        
+    def readDistance(self):   
         dist_uf=self.bus.read_i2c_block_data(self.addr,0x00)
-        #dist_uf=self.bus.read_word_data(self.addr,0x00)
-        dist=(dist_uf[0] * 256) + dist_uf[1]
-        return dist
+        self.dist=float((dist_uf[0] * 256) + dist_uf[1])
+        return None
