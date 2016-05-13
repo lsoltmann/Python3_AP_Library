@@ -49,6 +49,11 @@
         i_yaw           = integral gain, yaw
         il_yaw          = integral limit, yaw
         
+        p_alt           = porportional gain, altitude
+        d_alt           = derivative gain, altitude
+        i_alt           = integral gain, altitude
+        il_alt          = integral limit, altitude
+        
         PWM_MIN         = minimum PWM output value (u_sec)
         PWM_MAX         = maximum PWM output value (u_sec)
         PWM_FREQ        = PWM pulse frequency (Hz)
@@ -60,6 +65,11 @@
         dead_band       = one-sided PWM range around neutral where control input is set to zero
 
         thr_cut         = one-sided PWM range above minimum throttle for which all motors reamin off
+        
+        sys_or          = system orientation (see config file for definition)
+        
+        sys_offset_x    = system roll angle offset
+        sys_offset_y    = system pitch angle offset
 
         FROM CALIBRATION FILE
 
