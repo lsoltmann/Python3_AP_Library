@@ -11,6 +11,7 @@
     
     NOTES:
     - Written for python3
+    - Input and output coordinate format: [lat,lon]
     
     REFERENCES:
     - http://www.movable-type.co.uk/scripts/latlong.html
