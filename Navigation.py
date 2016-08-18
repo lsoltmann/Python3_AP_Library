@@ -5,72 +5,77 @@
     
     Revision History
     27 Mar 2016 - Created and debugged
+    17 Aug 2016 - Restructured and added additional functions
     
     Author: Lars Soltmann
     
-    INPUTS:
-
-    
-    OUTPUTS:
-
-    
     NOTES:
     - Written for python3
-    - Equations referenced from: http://www.movable-type.co.uk/scripts/latlong.html
-    - '_d' means degrees
-    - '_r' means radians
+    
+    REFERENCES:
+    - http://www.movable-type.co.uk/scripts/latlong.html
     
     '''
 
 
 import math
-import time
 
 class nav:
     def __init__(self):
         #Radius of Earth
         self.ER=3958.7613*5280 #miles to ft
 
-    #Distance between two lat lon coordinates in ft
-    def distance(self,lat1_d,lon1_d,lat2_d,lon2_d):
-        lat1_r=math.radians(lat1_d)
-        lon1_r=math.radians(lon1_d)
-        lat2_r=math.radians(lat2_d)
-        lon2_r=math.radians(lon2_d)
-
-        dlat=lat2_r-lat1_r
-        dlon=lon2_r-lon1_r
-
-        a=math.pow(math.sin(dlat)*0.5,2)+math.cos(lat1_r)*math.cos(lat2_r)*math.pow(math.sin(dlon)*0.5,2)
+    ##Distance between two lat/lon coordinates
+    #Input units = deg
+    def distance(self,p1,p2):
+        phi1=math.radians(p1[0])
+        phi2=math.radians(p2[0])
+        dphi=math.radians(p2[0]-p1[0])
+        dlam=math.radians(p2[1]-p1[1])
+        a=math.pow(math.sin(dphi*0.5),2)+math.cos(phi1)*math.cos(phi2)*math.pow(math.sin(dlam*0.5),2)
         c=2*math.atan2(math.sqrt(a),math.sqrt(1-a))
         d=self.ER*c
 
         return d #ft
 
-    #Bearing in deg between point1 and point2
-    def bearing(self,lat1_d,lon1_d,lat2_d,lon2_d):
-        lat1_r=math.radians(lat1_d)
-        lon1_r=math.radians(lon1_d)
-        lat2_r=math.radians(lat2_d)
-        lon2_r=math.radians(lon2_d)
+    ##Bearing between two lat/lon coordinates
+    #Input units = deg
+    def bearing(self,p1,p2):
+        y=math.sin(math.radians(p2[1])-math.radians(p1[1]))*\
+        math.cos(math.radians(p2[0]))
+        x=math.cos(math.radians(p1[0]))*math.sin(math.radians(p2[0]))-\
+        math.sin(math.radians(p1[0]))*math.cos(math.radians(p2[0]))*\
+        math.cos(math.radians(p2[1])-math.radians(p2[1]))
+        brng=math.degrees(math.atan2(y,x))
 
-        dlat=lat2_r-lat1_r
-        dlon=lon2_r-lon1_r
+        if brng<0:
+            brng=brng+360
 
-        theta=math.atan2(math.sin(dlon)*math.cos(lat2_r),math.cos(lat1_r)*math.sin(lat2_r)-math.sin(lat1_r)*math.cos(lat2_r)*math.cos(dlon))
-        theta=math.degrees(theta)
-        if theta<0:
-            theta=theta+360
+        return brng #deg
 
-        return theta #deg
+    ##Coordinates of the destination point given a start point, bearing, and distance
+    #Input units = deg, ft
+    def destination_point(self,p1,b,d):
+        p2=[0,0]
+        p2[0]=math.asin(math.sin(math.radians(p1[0]))*\
+        math.cos(d/self.ER)+math.cos(math.radians(p1[0]))*\
+        math.sin(d/self.ER)*math.cos(math.radians(b)))
+        p2[1]=math.radians(p1[1])+math.atan2(math.sin(math.radians(b))*\
+        math.sin(d/self.ER)*math.cos(math.radians(p1[0])),\
+        math.cos(d/self.ER)-math.sin(math.radians(p1[0]))*\
+        math.sin(p2[0]))
+        p2[0]=math.degrees(p2[0])
+        p2[1]=(math.degrees(p2[1])+540)%360-180
+    
+        return p2 #deg
 
-    #Crosstrack error between current position(3) and the greater circle line between start coordinate(1) and end coordinate(2)
-    def crosstrack(self,lat1_d,lon1_d,lat2_d,lon2_d,lat3_d,lon3_d):
-        d13=self.distance(lat1_d,lon1_d,lat3_d,lon3_d)/self.ER
-        b13=math.radians(self.bearing(lat1_d,lon1_d,lat3_d,lon3_d))
-        b12=math.radians(self.bearing(lat1_d,lon1_d,lat2_d,lon2_d))
+    ##Crosstrack error at p3 along a path from p1 to p2
+    #Input units = deg
+    #Sign indicates side, left = neg, right = pos
+    def crosstrack(self,p1,p2,p3):
+        CTE=math.asin(math.sin(self.distance(p1,p3)/self.ER))*\
+        math.sin(math.radians(self.bearing(p1,p3))-\
+        math.radians(self.bearing(p1,p2)))*self.ER
 
-        dxt=math.asin(math.sin(d13))*math.sin(b13-b12)*self.ER
-
-        return dxt #ft
+        return CTE #ft
 
