@@ -16,6 +16,11 @@
                 - Time increment (dt)
                 
             * See Notes for input format
+
+    Notation: 1 - Range finder
+	      2 - Barometer
+	      3 - GPS alt
+              4 - GPS vert vel
     
     Revision History
     17 Aug 2016 - Created and debugged
@@ -70,6 +75,8 @@ class alt_kalman:
         
         z1=z[0]
         z2=z[1]
+        z3=z[2]
+        z4=z[3]
         
         ## NOTE: the below sections were generated using code optimization in MAPLE 2016 to minimize function calls
         ## Create temporary variables to reduce overall number of calls while creating Kalman gain matrix
@@ -94,7 +101,11 @@ class alt_kalman:
         t15=self.r4*t5+t9*t5+t7*(self.r3*t13-t14)*self.p3*self.p2
         t7=t7*self.p2*self.p3
         t16=(-self.r4-t9)*self.p1+t7
-        t15=0.1e1/t15
+        try:
+            t15=0.1e1/t15
+        except:
+            t15=0
+            print('t15 zero')
         t4=(t4+t8)*t16
         t8=t7*self.r3
         t17=t15*h1
@@ -118,7 +129,7 @@ class alt_kalman:
         ksim5=t17*self.p3*(-t12*self.r3+t4+t6)
         ksim6=t10*self.p3*(-t9*self.r1*self.r3+t11+t3)
         ksim7=t16*self.p3*(-t12*self.r1+t13+t2)
-        ksim8=t15*h4*(self.p3*self.p2*t1+self.p4*t5)]])
+        ksim8=t15*h4*(self.p3*self.p2*t1+self.p4*t5)
         
         ## Estimate states
         xest1=self.x1+ksim1*(-h1*self.x1+z1)+ksim2*(-h2*self.x1+z2)+ksim3*(-h3*self.x1+z3)+ksim4*(-h4*self.x2+z4)
