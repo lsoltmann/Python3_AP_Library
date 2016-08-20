@@ -101,11 +101,7 @@ class alt_kalman:
         t15=self.r4*t5+t9*t5+t7*(self.r3*t13-t14)*self.p3*self.p2
         t7=t7*self.p2*self.p3
         t16=(-self.r4-t9)*self.p1+t7
-        try:
-            t15=0.1e1/t15
-        except:
-            t15=0
-            print('t15 zero')
+        t15=0.1e1/t15
         t4=(t4+t8)*t16
         t8=t7*self.r3
         t17=t15*h1
