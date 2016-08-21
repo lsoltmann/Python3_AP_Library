@@ -1,13 +1,23 @@
 '''
     PID.py
     
-    Description: PID controller
+    Description: PID controller class
     
     Revision History
     17 Mar 2016 - Created and debugged
     18 Apr 2016 - Updated, added second PID controller to used measured rate for derivative instead of estimated error rate
     28 Apr 2016 - Added additional functions to allow gains to be changed on the fly    
+    21 Aug 2016 - Added limit to control input to system
 
+    Input/output variables: kp - proportional gain
+                            kd - derivative gain
+                            ki - integrator gain
+                            I_L - integrator limit (absolute value)
+                            target - setpoint of controller
+                            actual - current system value
+                            dadt - rate of change of the current system value
+                            control_input_limit - controller input limit to system, set equal to zero to disable control limiting
+               
     Author: Lars Soltmann
 '''
 
@@ -38,7 +48,7 @@ class PID:
         self.ki=new_ki
 
     # PID controller - derivative uses d(error)/dt
-    def control(self,target, actual):
+    def control(self,target, actual,control_input_limit):
         if self.first_time==1:
             self.t_previous=time.time()
             control_input=0
@@ -67,7 +77,13 @@ class PID:
 
             # Calculate control input and limit if neccessary
             control_input=self.kp*error+self.kd*_derivative+self.ki*_integral
-        
+            if (control_input > control_input_limit and control_input_limit != 0):
+                control_input=control_input_limit
+            elif (control_input < -control_input_limit and control_input_limit != 0):
+                control_input=-control_input_limit
+            else:
+               pass        
+
             # Save time and error values for next loop;
             self.t_previous=t
             self.error_previous=error
@@ -76,7 +92,7 @@ class PID:
 
 
     # PID controller - derivative uses measured d(actual)/dt
-    def control2(self,target, actual, dadt):
+    def control2(self,target, actual, dadt,control_input_limit):
         if self.first_time==1:
             self.t_previous=time.time()
             control_input=0
@@ -105,7 +121,13 @@ class PID:
 
             # Calculate control input and limit if neccessary
             control_input=self.kp*error+self.kd*_derivative+self.ki*_integral
-        
+            if (control_input > control_input_limit and control_input_limit != 0):
+                control_input=control_input_limit
+            elif (control_input < -control_input_limit and control_input_limit != 0):
+                control_input=-control_input_limit
+            else:
+               pass
+
             # Save time and error values for next loop;
             self.t_previous=t
             self.error_previous=error
