@@ -48,7 +48,7 @@ class PID:
         self.ki=new_ki
 
     # PID controller - derivative uses d(error)/dt
-    def control(self,target, actual,control_input_limit):
+    def control(self,target, actual,control_input_limit='NONE'):
         if self.first_time==1:
             self.t_previous=time.time()
             control_input=0
@@ -77,12 +77,15 @@ class PID:
 
             # Calculate control input and limit if neccessary
             control_input=self.kp*error+self.kd*_derivative+self.ki*_integral
-            if (control_input > control_input_limit and control_input_limit != 0):
-                control_input=control_input_limit
-            elif (control_input < -control_input_limit and control_input_limit != 0):
-                control_input=-control_input_limit
+            if control_input_limit == 'NONE':
+                pass
             else:
-               pass        
+                if (control_input > control_input_limit and control_input_limit != 0):
+                    control_input=control_input_limit
+                elif (control_input < -control_input_limit and control_input_limit != 0):
+                    control_input=-control_input_limit
+                else:
+                    pass        
 
             # Save time and error values for next loop;
             self.t_previous=t
@@ -121,12 +124,15 @@ class PID:
 
             # Calculate control input and limit if neccessary
             control_input=self.kp*error+self.kd*_derivative+self.ki*_integral
-            if (control_input > control_input_limit and control_input_limit != 0):
-                control_input=control_input_limit
-            elif (control_input < -control_input_limit and control_input_limit != 0):
-                control_input=-control_input_limit
+            if control_input_limit == 'NONE':
+                pass
             else:
-               pass
+                if (control_input > control_input_limit and control_input_limit != 0):
+                    control_input=control_input_limit
+                elif (control_input < -control_input_limit and control_input_limit != 0):
+                    control_input=-control_input_limit
+                else:
+                    pass
 
             # Save time and error values for next loop;
             self.t_previous=t
