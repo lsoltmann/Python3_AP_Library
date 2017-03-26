@@ -16,7 +16,7 @@
                             target - setpoint of controller
                             actual - current system value
                             dadt - rate of change of the current system value
-                            control_input_limit - controller input limit to system, set equal to zero to disable control limiting
+                            control_input_limit - [optional] controller input limit to system
                
     Author: Lars Soltmann
 '''
@@ -80,9 +80,9 @@ class PID:
             if control_input_limit == 'NONE':
                 pass
             else:
-                if (control_input > control_input_limit and control_input_limit != 0):
+                if (control_input > control_input_limit):
                     control_input=control_input_limit
-                elif (control_input < -control_input_limit and control_input_limit != 0):
+                elif (control_input < -control_input_limit):
                     control_input=-control_input_limit
                 else:
                     pass        
@@ -127,9 +127,9 @@ class PID:
             if control_input_limit == 'NONE':
                 pass
             else:
-                if (control_input > control_input_limit and control_input_limit != 0):
+                if (control_input > control_input_limit):
                     control_input=control_input_limit
-                elif (control_input < -control_input_limit and control_input_limit != 0):
+                elif (control_input < -control_input_limit):
                     control_input=-control_input_limit
                 else:
                     pass
