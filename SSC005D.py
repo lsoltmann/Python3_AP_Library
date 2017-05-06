@@ -37,9 +37,15 @@ class HWSSC:
 
 
     def readPressure_raw(self):
-        pdata=self.bus.read_i2c_block_data(self.devAddr, 0)
+        # Read two bytes of data
+        pdata=self.bus.read_i2c_block_data(self.devAddr, 0,2)
+        # The status byte is the first two bits of the MSB
+        #status=pdata_arr[0] >> 6
+        # Combine the two bytes
+        pdata=((pdata[0]<<8)+pdata[1])
+        # Set the status bits equal to zero
+        pdata=pdata & 0x3fff
         return pdata
-
 
     def convertPressure(self,pdata,calRange,sensRange):
         if (calRange == 1): # 10 to 90% calibration
