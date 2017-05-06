@@ -46,7 +46,7 @@ class MS5805:
         
     def initialize(self):
         # Write the reset command to get the calibration coefficients
-        self.bus.write_i2c_block_data(self.devAddr, self.RESET,0)
+        self.bus.write_i2c_block_data(self.devAddr, self.RESET,[0])
         # Read the calibration coefficients
         temp_val=self.bus.read_i2c_block_data(self.devAddr, self.CAL_C1,2)
         self.C1 = temp_val[0]<<8 | temp_val[1]
@@ -58,8 +58,8 @@ class MS5805:
         self.C4 = temp_val[0]<<8 | temp_val[1]
         temp_val=self.bus.read_i2c_block_data(self.devAddr, self.CAL_C5,2)
         self.C5 = temp_val[0]<<8 | temp_val[1]
-        temp_val=self.bus.read_i2c_block_data(self.devAddr, self.CAL_C6,2)
-        self.C6 = temp_val[0]<<8 | temp_val[1]
+        #temp_val=self.bus.read_i2c_block_data(self.devAddr, self.CAL_C6,2)
+        #self.C6 = temp_val[0]<<8 | temp_val[1]
         
         # For the 6th coefficient, force it to the given value since it doesn't seem to read correctly
         # *!*!*!*!*!*!*!*!*!*!
@@ -68,12 +68,12 @@ class MS5805:
 
 
     def read_pressure_temperature(self):
-        self.bus.write_i2c_block_data(self.devAddr, self.D1,0)
+        self.bus.write_i2c_block_data(self.devAddr, self.D1,[0])
         time.sleep(0.02)
         temp_val=self.bus.read_i2c_block_data(self.devAddr, self.ADCREAD,3)
         pressi = (temp_val[0] << 16) | (temp_val[1] << 8) | temp_val[2]
         
-        self.bus.write_i2c_block_data(self.devAddr, self.D2,0)
+        self.bus.write_i2c_block_data(self.devAddr, self.D2,[0])
         time.sleep(0.02)
         temp_val=self.bus.read_i2c_block_data(self.devAddr, self.ADCREAD,3)
         tempi = (temp_val[0] << 16) | (temp_val[1] << 8) | temp_val[2]
@@ -103,9 +103,15 @@ class MS5805:
         self.TEMP = temp / 100
 
 
-    def getTemperature(self):
-        return self.TEMP
+    def getTemperature_degF(self):
+        return self.TEMP*1.8+32
+
+    def getTemperature_egC(self):
+        return self.TEMP 
 
 
-    def getPressure(self):
+    def getPressure_mbar(self):
         return self.PRESS
+
+    def getPressure_psf(self):
+        return self.PRESS*2.0885434273
