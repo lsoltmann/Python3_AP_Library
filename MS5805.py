@@ -27,7 +27,7 @@ import smbus
 import time
 import math
 
-class HWSSC:
+class MS5805:
     def __init__(self,devAddr):
         self.devAddr=devAddr
         self.bus=smbus.SMBus(1)
