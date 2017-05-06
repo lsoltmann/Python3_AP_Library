@@ -44,20 +44,20 @@ class HWSSC:
         # Combine the two bytes
         pdata=((pdata[0]<<8)+pdata[1])
         # Set the status bits equal to zero
-        pdata=pdata & 0x3fff
-        return pdata
+        self.pdata=pdata & 0x3fff
+        return None
 
-    def convertPressure(self,pdata,calRange,sensRange):
+    def convertPressure(self,calRange,sensRange):
         if (calRange == 1): # 10 to 90% calibration
-            press=(1.525878906e-4*pdata-1.25)*sensRange
+            press=(1.525878906e-4*self.pdata-1.25)*sensRange
         
         elif (calRange == 2): # 5 to 95% calibration
-            press=(1.356336806e-4*pdata-1.111111111)*sensRange
+            press=(1.356336806e-4*self.pdata-1.111111111)*sensRange
 
         elif (calRange == 3): # 5 to 85% calibration
-            press=(1.525878906e-4*pdata-1.125)*sensRange
+            press=(1.525878906e-4*self.pdata-1.125)*sensRange
 
         elif (calRange == 4): # 4 to 94% calibration
-            press=(1.356336806e-4*pdata-1.088888889)*sensRange
+            press=(1.356336806e-4*self.pdata-1.088888889)*sensRange
         
         return press
