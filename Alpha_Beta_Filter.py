@@ -21,7 +21,6 @@ class trackfilt:
     def __init__(self,alpha,beta):
         self.alpha=alpha
         self.beta=beta
-        self.N_avg=5 #Number of samples to average after a reset to start off the filter
         self.reset()
 
     ## Set new alpha coefficient
@@ -35,23 +34,20 @@ class trackfilt:
     ## Reset filter
     def reset(self):
         self.first_time=1
-        self.avg_count=1
-        self.xk_1=0
-        self.vk_1=0
 
     ## Track the state
     def track(self,xm,dt):
-        # If it's the first time, set the previous state equal to an average of the current state
+        # If it's the first time, set the current and previous states equal to the measurement
         if self.first_time==1:
-            self.xk_1=self.xk_1+xm/self.N_avg
-            if self.avg_count==self.N_avg:
-                self.first_time=0 #Exit 'first_time' loop when target number of samples have been averaged
-            else:
-                self.avg_count=self.avg_count+1
+            self.xk_1=xm
+            self.vk_1=0
             xk=self.xk_1
             vk=self.vk_1
+            self.first_time=0
+    
         else:
-            # Predit the next state while holding velocity constant (generally acceptable for small time increments)
+            # Predit the next state while holding velocity constant
+            # (It is assumed that the velocity is constant between corrections)
             xk=self.xk_1+(self.vk_1*dt)
             vk=self.vk_1
             
