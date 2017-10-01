@@ -55,6 +55,7 @@ class PID:
         self.seed_flag=0
         self.freeze=0
         self.first_time=1
+        self.I_TERM=0
     
     # Seed controller with user specified integrator
     def seed_controller(self,seed_value):
