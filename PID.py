@@ -103,10 +103,9 @@ class PID:
             ## Calculate derivative based on controller type
             if type==1:
                 derivative_term=(error-self.error_previous)/dt
-                D_TERM=derivative_term*self.kd
             elif type==2:
                 derivative_term=dadt
-                D_TERM=derivative_term*self.kd
+            D_TERM=derivative_term*self.kd
         
             ## Estimate integral of error
             # If integral freeze is active, don't update error sum
